@@ -28,7 +28,7 @@ public class Widgetd2Config extends Activity implements OnClickListener{
 		et = (EditText)findViewById(R.id.editText1);
 
 		SharedPreferences preferences = getSharedPreferences("example", Context.MODE_PRIVATE);
-		//get the key d3 and set a default value of "" if the key doesn't exist.  IE the first time this app is run.
+		//get the key randnum and set a default value of 100 if the key doesn't exist.  IE the first time this app is run.
 		randnum = preferences.getInt("randnum", 100);
 		et.setText(String.valueOf(randnum));
 		Log.w("ExampleACtivity"," num is "+ randnum);
