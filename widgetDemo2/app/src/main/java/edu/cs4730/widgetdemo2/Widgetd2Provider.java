@@ -9,54 +9,88 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 public class Widgetd2Provider extends AppWidgetProvider {
-	//private static final String ACTION_CLICK = "ACTION_CLICK";
-	int randnum = 100;  //default value
 
-	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-			int[] appWidgetIds) {
-		
-		SharedPreferences preferences = context.getSharedPreferences("example", Context.MODE_PRIVATE);
-		//get the key d3 and set a default value of "" if the key doesn't exist.  IE the first time this app is run.
-		randnum = preferences.getInt("randnum", 100);
-		// Log.w("widget", "randnum is "+ randnum);
+    int randnum = 100;  //default value
+    private static final String PREF_PREFIX_KEY = "appwidget_";
 
-		// Get all ids
-		ComponentName thisWidget = new ComponentName(context, Widgetd2Provider.class);
-		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-		for (int widgetId : allWidgetIds) {
-			//for (int widgetId : appWidgetIds) {
-			// Create some random data
-			int number = (new Random().nextInt(randnum));
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-			Log.w("WidgetExample", String.valueOf(number));
-			// Set the text
-			remoteViews.setTextViewText(R.id.update, String.valueOf(number));
+        // if there may be multiple widgets active, so update all of them
+        final int N = appWidgetIds.length;
+        for (int i = 0; i < N; i++) {
+            updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
+        }
+    }
 
-			// Register an onClickListener
-			Intent intent = new Intent(context,Widgetd2Provider.class);
+    /*
+    * do all the heavy lifting to update the widget here.
+     */
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        //first get the preference for this widget that is the top number.
+        SharedPreferences preferences = context.getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE);
 
-			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			//if I wanted every widget to up use this section that is commented out
-			//ComponentName thisWidget = new ComponentName(context, Example.class);
-			//int[] ids = appWidgetManager.getAppWidgetIds(thisWidget);
-			
-			//if I want only this one to update, then use this code.
-			int[] ids = {widgetId};
-			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-			//if I wanted every widget to update, then use this code, (commented out)
-			//intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        //Now get the preference for this widget, stored using it's id number.   The default value is 100, if not found.
+        randnum = preferences.getInt(PREF_PREFIX_KEY + appWidgetId , 100);
 
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-					widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-			appWidgetManager.updateAppWidget(widgetId, remoteViews);
-		}
-	}
+        // Now create get the random number for it.
+        int number = (new Random().nextInt(randnum));
 
+        //finally update the widget view.
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+        //Log.w("WidgetExample", String.valueOf(number));
+        // Set the text
+        remoteViews.setTextViewText(R.id.update, String.valueOf(number));
+
+        // Register an onClickListener
+        Intent intent = new Intent(context, Widgetd2Provider.class);
+
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        //if I wanted every widget to update use this section and comment out the one below.
+        //ComponentName thisWidget = new ComponentName(context, Example.class);
+        //int[] ids = appWidgetManager.getAppWidgetIds(thisWidget);
+
+        //if I want only this one to update, then use this code.
+        int[] ids = {appWidgetId};
+
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //where update is the view and is clickable.  That way, it the widget will update when clicked.
+        //in this case get a new random number.
+        remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+
+    }
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        // When the user deletes the widget, delete the preference associated with it.
+        //there maybe more then one, so loop.
+        SharedPreferences.Editor editor = context.getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE).edit();
+
+        final int N = appWidgetIds.length;
+        for (int i = 0; i < N; i++) {
+            editor.remove(PREF_PREFIX_KEY + i);
+        }
+
+        editor.commit();  //finished, comment the preferences.
+    }
+
+    @Override
+    public void onEnabled(Context context) {
+        // Enter relevant functionality for when the first widget is created
+        //in this case, nothing is necessary, since it is handled for every widget.
+    }
+
+    @Override
+    public void onDisabled(Context context) {
+        // Enter relevant functionality for when the last widget is disabled
+        //it's all handled by the onDelete, so there is nothing here.
+    }
 }
