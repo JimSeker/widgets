@@ -14,6 +14,9 @@ It maybe easier to follow what is going on.
 <b>widgetDemo3</b> an extension of widgetDemo, with an extra "button" that calls the confActivity, so the user can change the max
 number for the random number.
 
+<b>widgetDemoButtons</b> shows how the homescreen widget can have different buttons via a receiver, so it can do more interesting/complex things.
+
+
 
 These are example code for University of Wyoming, Cosc 4730 Mobile Programming course.
 All examples are for Android.
