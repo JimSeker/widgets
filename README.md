@@ -8,7 +8,8 @@ in the configActivity.  It uses a sharedpreference so each instance of the widge
 managed in the static methods in the ConfigActivity.  There is a launcher activity, but does nothing, it just so you know the app has
 been installed on the phone.  In a real app, the launcher app would not exist.
 
-<b>widgetDemo2</b>
+<b>widgetDemo2</b> is the same as widgetDemo, except there are no static methods calls between the configActivity and the widget.
+It maybe easier to follow what is going on.
 
 
 
