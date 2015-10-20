@@ -11,6 +11,8 @@ been installed on the phone.  In a real app, the launcher app would not exist.
 <b>widgetDemo2</b> is the same as widgetDemo, except there are no static methods calls between the configActivity and the widget.
 It maybe easier to follow what is going on.
 
+<b>widgetDemo3</b> an extension of widgetDemo, with an extra "button" that calls the confActivity, so the user can change the max
+number for the random number.
 
 
 These are example code for University of Wyoming, Cosc 4730 Mobile Programming course.
