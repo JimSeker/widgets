@@ -1,18 +1,23 @@
 package edu.cs4730.widgetdemo;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class exampleConfActivity extends Activity implements OnClickListener{
+/*
+ * This is the activity that sets up the configurations for the homescreen widget.
+ */
+
+
+public class exampleConfActivity extends AppCompatActivity implements OnClickListener{
 	int randnum = 100;  //default value
 	EditText et;
 	Button btnok, btncancel;
@@ -25,7 +30,8 @@ public class exampleConfActivity extends Activity implements OnClickListener{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		//if this is exited before we do anything, set the right result.
 		setResult(RESULT_CANCELED);
 		
 		setContentView(R.layout.exampleconfactivity);
@@ -108,5 +114,3 @@ public class exampleConfActivity extends Activity implements OnClickListener{
 	}
 	
 }
-
-//int number = (new Random().nextInt(100));

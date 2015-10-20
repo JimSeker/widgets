@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="A number"
-      >
+        android:inputType="number">
 
     </EditText>
 

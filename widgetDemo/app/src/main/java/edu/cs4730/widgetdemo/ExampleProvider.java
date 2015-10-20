@@ -16,55 +16,19 @@ import android.widget.RemoteViews;
 //http://developer.android.com/guide/topics/appwidgets/index.html
 //http://developer.android.com/guide/practices/ui_guidelines/widget_design.html
 
+/*
+ * So this is actually the widget and it updater.
+ * There are a couple of calls to static functions in the exampleConfActivity, so the
+ * preferences can be stored/restored/deleted.
+ */
+
 
 public class ExampleProvider extends AppWidgetProvider {
 
-	//private static final String ACTION_CLICK = "ACTION_CLICK";
-	//int randnum = 100;  //default value
-
-/*
-	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-			int[] appWidgetIds) {
-		
-		SharedPreferences preferences = context.getSharedPreferences("example", Context.MODE_PRIVATE);
-		//get the key d3 and set a default value of "" if the key doesn't exist.  IE the first time this app is run.
-		randnum = preferences.getInt("randnum", 100);
-		// Log.w("widget", "randnum is "+ randnum);
-
-		// Get all ids
-		ComponentName thisWidget = new ComponentName(context, Example.class);
-		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-		for (int widgetId : allWidgetIds) {
-			//for (int widgetId : appWidgetIds) {
-			// Create some random data
-			int number = (new Random().nextInt(randnum));
-
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.example);
-			Log.w("WidgetExample", String.valueOf(number));
-			// Set the text
-			remoteViews.setTextViewText(R.id.update, String.valueOf(number));
-
-			// Register an onClickListener
-			Intent intent = new Intent(context, Example.class);
-
-			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-					0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-			appWidgetManager.updateAppWidget(widgetId, remoteViews);
-		}
-	}
-	
-	
-*/
-	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 	
-		// There may be multiple widgets active, so update all of them
+		// if there may be multiple widgets active, so update all of them
 		final int N = appWidgetIds.length;
 		for (int i = 0; i < N; i++) {
 			updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
@@ -72,7 +36,10 @@ public class ExampleProvider extends AppWidgetProvider {
 	}
 	
 	
-	
+	/*
+	 * This is where the actual work is done.   It is called from onUpdate for each
+	 * (homescreen) widget to update.   likely only one, but below we an change that functionality.
+	 */
 	static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
 		// Create some random number from the shared preference number stored in the configure activity.
@@ -92,7 +59,7 @@ public class ExampleProvider extends AppWidgetProvider {
 
 		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		
-		//if I wanted every widget to up use this section that is commented out
+		//if I wanted every widget to update use this section and comment out the one below.
 		//ComponentName thisWidget = new ComponentName(context, Example.class);
 		//int[] ids = appWidgetManager.getAppWidgetIds(thisWidget);
 		
@@ -100,10 +67,11 @@ public class ExampleProvider extends AppWidgetProvider {
 		int[] ids = {appWidgetId};
 		
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-		//intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		//intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //this never worked correctly.
 
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		
+		//where update is the view and is clickable.  That way, it the widget will update when clicked.
+        //in this case get a new random number.
 		remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
 
 		// Instruct the widget manager to update the widget
@@ -125,11 +93,13 @@ public class ExampleProvider extends AppWidgetProvider {
 	@Override
 	public void onEnabled(Context context) {
 		// Enter relevant functionality for when the first widget is created
+        //in this case, nothing is necessary, since it is handled for every widget.
 	}
 
 	@Override
 	public void onDisabled(Context context) {
 		// Enter relevant functionality for when the last widget is disabled
+        //it's all handled by the onDelete, so there is nothing here.
 	}
 	
 }
