@@ -16,7 +16,8 @@ number for the random number.
 
 <b>widgetDemoButtons</b> shows how the homescreen widget can have different buttons via a receiver, so it can do more interesting/complex things.
 
-
+<b>TapWidget</b> is a demo of wideget, service, networking and pull it all together to basically connect two devices via wifi and send messages
+that vibrate the other phone.   It is a work in progress and still has some issues.
 
 These are example code for University of Wyoming, Cosc 4730 Mobile Programming course.
 All examples are for Android.
