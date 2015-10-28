@@ -20,6 +20,7 @@ public class TapWidget extends AppWidgetProvider {
     private static final String ButtonClick2 = "ButtonClickTag2";
     private static final String TextClick = "TextClickTag1";
     private static final String MESSAGE = "Message";
+    private static final String TAG = "widget";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -38,7 +39,6 @@ public class TapWidget extends AppWidgetProvider {
             TapWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
         }
     }
-
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -82,25 +82,25 @@ public class TapWidget extends AppWidgetProvider {
         if (ButtonClick1.equals(intent.getAction())) {
             //send service a write message for short.
             Intent i = new Intent(context, MyNetworkService.class);
-            i.putExtra("cmd", "write");
-            i.putExtra("msg", "S");
+            i.putExtra(myConstants.KEY_CMD, myConstants.CMD_WRITE);
+            i.putExtra(myConstants.KEY_MSG, "S");
             context.startService(i);
 
             Toast.makeText(context, "Button1", Toast.LENGTH_SHORT).show();
-            Log.w("Widget", "Clicked button1");
+            Log.w(TAG, "Clicked button1");
         } else if (ButtonClick2.equals(intent.getAction())) {
             //send service a write message for short.
             Intent i = new Intent(context, MyNetworkService.class);
-            i.putExtra("cmd", "write");
-            i.putExtra("msg", "L");
+            i.putExtra(myConstants.KEY_CMD, myConstants.CMD_WRITE);
+            i.putExtra(myConstants.KEY_MSG, "L");
             context.startService(i);
             Toast.makeText(context, "Button2", Toast.LENGTH_SHORT).show();
-            Log.w("Widget", "Clicked button2");
+            Log.w(TAG, "Clicked button2");
         } else if (MESSAGE.equals(intent.getAction())) {
             //we have received a message.
-            Bundle extras =  intent.getExtras();
+            Bundle extras = intent.getExtras();
             if (extras != null) {
-                String msg = extras.getString("msg", "");
+                String msg = extras.getString(myConstants.KEY_MSG, "");
                 int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
                         AppWidgetManager.INVALID_APPWIDGET_ID);
                 switch (msg) {
@@ -110,47 +110,26 @@ public class TapWidget extends AppWidgetProvider {
                     case "L": //long message
                         vibrate(context, 2); //long
                         break;
-                    case "connected": //we are connected
+                    case myConstants.MSG_CONNECT: //we are connected
                         if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                             TapWidgetConfigureActivity.saveTitlePref(context, appWidgetId, "C");
-                            //update widget.
-                           // AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                           // TapWidget.updateAppWidget(context, appWidgetManager, appWidgetId);
                         }
                         break;
-                    case "disconnected": //disconnected
+                    case myConstants.MSG_DISCONNECT: //disconnected
                         if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                             TapWidgetConfigureActivity.saveTitlePref(context, appWidgetId, "DC");
-                            //update widget.
-
                         }
 
                         break;
                     default:
-                        Log.v("onreceive", "message is " + msg);
+                        Log.v(TAG, "message is " + msg);
                 }
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 TapWidget.updateAppWidget(context, appWidgetManager, appWidgetId);
             }
-        } else if (TextClick.equals(intent.getAction())) {
-            Log.v("OnReceive", "Text click?");
-            /*  This should not happen.
-            Bundle extras = intent.getExtras();
-            String widgetText = "Textivew"; //default
-            if (extras != null) {
-                //Log.w("Widget", "Bundle is not NULL");
-                int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                        AppWidgetManager.INVALID_APPWIDGET_ID);
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                    //Log.w("Widget", "widget id is ok");
-                    widgetText = TapWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
-                }
-            }
-            Toast.makeText(context, widgetText, Toast.LENGTH_SHORT).show();
-            Log.w("Widget", "TV: " + widgetText);
-            */
         }
     }
+
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
@@ -163,8 +142,8 @@ public class TapWidget extends AppWidgetProvider {
         context.stopService(i);
     }
 
-    public void vibrate(Context context, int time ) {
-        Vibrator v = (Vibrator)  context.getSystemService(Context.VIBRATOR_SERVICE);
+    public void vibrate(Context context, int time) {
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         // from http://www.learn-android-easily.com/2012/11/how-to-vibrate-android-phone.html
         // pass the number of millseconds fro which you want to vibrate the phone here we
         // have passed 2000 so phone will vibrate for 2 seconds.
@@ -183,4 +162,3 @@ public class TapWidget extends AppWidgetProvider {
     }
 
 }
-

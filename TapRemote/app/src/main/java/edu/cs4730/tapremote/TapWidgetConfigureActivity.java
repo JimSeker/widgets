@@ -77,22 +77,22 @@ public class TapWidgetConfigureActivity extends Activity {
             switch(v.getId()) {
                 case R.id.button_Server:
                     portn = port.getText().toString();
-                    i.putExtra("myport", portn);
-                    i.putExtra("cmd", "connect");
-                    i.putExtra("server", true);
+                    i.putExtra(myConstants.KEY_PORT, portn);
+                    i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
+                    i.putExtra(myConstants.KEY_SERVER, true);
                     i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     break;
                 case R.id.button_client:
                     hostn = hostname.getText().toString();
                     portn = port.getText().toString();
-                    i.putExtra("cmd", "connect");
-                    i.putExtra("server", false);
-                    i.putExtra("myport", portn);
-                    i.putExtra("iphost", hostn);
+                    i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
+                    i.putExtra(myConstants.KEY_SERVER, false);
+                    i.putExtra(myConstants.KEY_PORT, portn);
+                    i.putExtra(myConstants.KEY_HOST, hostn);
                     i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     break;
                 case R.id.button_disconnect:
-                    i.putExtra("cmd", "close");
+                    i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CLOSE);
                     break;
 
             }

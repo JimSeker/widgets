@@ -4,7 +4,6 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.IBinder;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -40,7 +39,7 @@ public class MyNetworkService extends Service {
     BufferedReader in;
     PrintWriter out;
     Thread mythread;
-    String  cmd = "";
+    String cmd = "";
 
     public MyNetworkService() {
     }
@@ -58,102 +57,102 @@ public class MyNetworkService extends Service {
             String host = "";
             String message = "";
             boolean amserver = false;
+            String TAG = "handler";
 
             Bundle extras = msg.getData();
 
             if (extras != null) {
                 Log.v("handler", "extras is not null");
                 //First check the command.   Connect, write, read?, close, ?
-                cmd = extras.getString("cmd", "");
-                Log.v("handler", "command " + cmd);
+                cmd = extras.getString(myConstants.KEY_CMD, "");
+                Log.v(TAG, "command " + cmd);
                 switch (cmd) {
-                    case "connect":
-                        Log.v("handler", "Running connect code.");
-                        //if (!amserver) { ///client, need a hostname
-                            host = extras.getString("iphost", "None");
-                            Log.v("Service", "Hostname is " + host);
-                        //}
-                        Log.v("Service", "iPort is " + extras.getString("myport"));
-                        port = Integer.parseInt(extras.getString("myport", "0"));
-                        Log.v("Service", "Port is " + port);
-                        //got the info, now ready to setup the networking
-                        amserver = extras.getBoolean("server", false);
+                    case myConstants.CMD_CONNECT:
+                        Log.v(TAG, "Running connect code.");
 
+                        //get the intent information
+                        amserver = extras.getBoolean(myConstants.KEY_SERVER, false);
+                        host = extras.getString(myConstants.KEY_HOST, "None");  //on server, this will be none
+                        Log.v(TAG, "Hostname is " + host);
+                        port = Integer.parseInt(extras.getString(myConstants.KEY_PORT, "0"));
+                        Log.v(TAG, "Port is " + port);
+
+                        //got the info, now ready to setup the networking
                         if (amserver) {
                             //I am the server
-                            Log.v("hander", "IamServer");
+                            Log.v(TAG, "IamServer");
                             connected = serverConn(port);
                         } else {
                             //I am the client
-                            Log.v("hander", "IamClient");
+                            Log.v(TAG, "IamClient");
                             connected = clientConn(host, port);
                         }
-                        messenger = (Messenger) extras.get("MESSENGER");
+                        //get how to send info back to call, by handler or widget id.
+                        messenger = (Messenger) extras.get(myConstants.KEY_MESSAGER);
                         appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
                                 AppWidgetManager.INVALID_APPWIDGET_ID);
 
                         if (connected) {
-                            Log.v("hander", "Connected, Reading!");
-                            sendlocalmsg("connected");
+                            Log.v(TAG, "Connected, Reading!");
+                            sendlocalmsg(myConstants.MSG_CONNECT);
                             //start a read loop on the seperate thread.
                             mythread = new Thread(new readthread());
                             mythread.start();
-
                         } else {
-                            sendlocalmsg("disconnected");
+                            sendlocalmsg(myConstants.MSG_DISCONNECT);
                         }
                         break;
-                    case "write":
-                        message = extras.getString("msg", "");
-                        Log.v("service", "write is " + message);
+                    case myConstants.CMD_WRITE:
+                        message = extras.getString(myConstants.KEY_MSG, "");
+                        Log.v(TAG, "write is " + message);
                         if (message.compareTo("") != 0) {
                             sendmsg(message);
-                            Log.v("service", "wrote message " + message);
+                            Log.v(TAG, "wrote message " + message);
                         }
                         break;
+
                     case "close":
-                        //if (connected) {
-                        Log.v("service", "close at top. " );
-                        Log.v("service", "about to conn = false. " );
+
+                        Log.v(TAG, "close at top. ");
+                        Log.v(TAG, "about to conn = false. ");
                         connected = false;
-                            try {
+                        try {
 
-                                Log.v("service", "connect is now false " );
-                                if (out != null) {
-                                    out.close();
-                                }
-                                Log.v("service", "close out " );
-                                if (in != null) {
-                                    in.close();
-                                }
-                                Log.v("service", "close in " );
-
-
-                                if (client != null) {
-                                    client.close();
-                                    //client = null;
-                                }
-                                Log.v("service", "close client " );
-                                if (serverSocket != null) {
-                                    serverSocket.close();
-                                    //serverSocket = null;
-                                }
-                                Log.v("service", "close serversocket " );
-                            } catch (Exception e) {
-                                Log.v("service", "close error");
-                                e.printStackTrace();
-                                //don't care, just close everything.
-                            } finally {
-                                Log.v("service", "close null all start " );
-                                in = null;
-                                out = null;
-                                client = null;
-                                serverSocket = null;
-                                Log.v("service", "close null all end " );
+                            Log.v(TAG, "connect is now false ");
+                            if (out != null) {
+                                out.close();
                             }
+                            Log.v(TAG, "close out ");
+                            if (in != null) {
+                                in.close();
+                            }
+                            Log.v(TAG, "close in ");
 
-                        //}
-                        sendlocalmsg("disconnected");
+
+                            if (client != null) {
+                                client.close();
+
+                            }
+                            Log.v(TAG, "close client ");
+                            if (serverSocket != null) {
+                                serverSocket.close();
+
+                            }
+                            Log.v(TAG, "close serversocket ");
+                        } catch (Exception e) {
+                            Log.v(TAG, "close error");
+                            e.printStackTrace();
+                            //don't care, just close everything.
+                        } finally {
+                            Log.v(TAG, "close null all start ");
+                            in = null;
+                            out = null;
+                            client = null;
+                            serverSocket = null;
+                            Log.v(TAG, "close null all end ");
+                        }
+                        //send back that we are now disconnected.
+                        sendlocalmsg(myConstants.MSG_DISCONNECT);
                         break;
                     default:
                         //error
@@ -161,14 +160,14 @@ public class MyNetworkService extends Service {
 
 
             } else {
-                Log.v("handler", "shit extras are null?");
+                Log.v(TAG, "damn extras are null?");
             }
-            Log.v("Handler", "Connected is " + connected);
+            Log.v(TAG, "Connected is " + connected);
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
-          //  if ( //!connected  ||   //read died or other failure
-           //      (cmd.compareTo("close") == 0 )     )  //close command issued.
-           //     stopSelf(msg.arg1);  //stop the service.
+            //  if ( //!connected  ||   //read died or other failure
+            //      (cmd.compareTo("close") == 0 )     )  //close command issued.
+            //     stopSelf(msg.arg1);  //stop the service.
         }
     }
 
@@ -189,7 +188,7 @@ public class MyNetworkService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+
         Log.v("OnStartCommand", "Starting message");
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -216,8 +215,9 @@ public class MyNetworkService extends Service {
 
     //network service stuff.
     public boolean serverConn(int port) {
+        String TAG = "ServerConn";
         boolean success = false;
-        Log.v("Service", "about to setup accept.");
+        Log.v(TAG, "about to setup accept.");
         try {
             //setup new socket connection
             serverSocket = new ServerSocket(port);
@@ -227,11 +227,11 @@ public class MyNetworkService extends Service {
             e.printStackTrace();
             serverSocket = null;
             client = null;
-            Log.v("service", "Server connect error.");
+            Log.v(TAG, "Server connect error.");
 
             return success;
         }
-        Log.v("Service", "past accept.");
+        Log.v(TAG, "past accept.");
 //setup send/receive streams.
         try {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -245,15 +245,16 @@ public class MyNetworkService extends Service {
                 client = null;
                 serverSocket = null;
             }
-            Log.v("service", "in out error.");
+            Log.v(TAG, "in out error.");
             return success;
         }
-        Log.v("Service", "server connected.");
+        Log.v(TAG, "server connected.");
         //ok, everything is setup and working!
         success = true;
 
         return success;
     }
+
     class readthread implements Runnable {
 
         @Override
@@ -261,14 +262,16 @@ public class MyNetworkService extends Service {
             readmsg();
         }
     }
+
     public boolean clientConn(String iphost, int port) {
         boolean success = false;
         InetAddress serverAddr = null;
+        String TAG = "clientConn";
         try {
             serverAddr = InetAddress.getByName(iphost);
         } catch (UnknownHostException e) {
             //e.printStackTrace();
-            Log.v("service", "client connect error Inet.");
+            Log.v(TAG, "client connect error Inet.");
             return success;
         }
 
@@ -276,11 +279,11 @@ public class MyNetworkService extends Service {
             client = new Socket(serverAddr, port);
         } catch (IOException e) {
             //e.printStackTrace();
-            Log.v("service", "client connect error socket. " + iphost + " " + port);
-            Log.v("Service", "Error is"+ e);
+            Log.v(TAG, "client connect error socket. " + iphost + " " + port);
+            Log.v(TAG, "Error is" + e);
             return success;
         }
-        Log.v("Service", "connected.");
+        Log.v(TAG, "connected.");
 
         //made connection, setup the read (in) and write (out)
         try {
@@ -290,12 +293,12 @@ public class MyNetworkService extends Service {
             //e.printStackTrace();
             try {
                 client.close();
-            } catch (IOException e1) {
-                //e1.printStackTrace();
+            } catch (Exception e1) {
+                Log.v(TAG," " + e1);
             }
             return success;
         }
-        Log.v("Service", "client connected.");
+        Log.v(TAG, "client connected.");
         //yes, it is connected.
         success = true;
 
@@ -305,25 +308,26 @@ public class MyNetworkService extends Service {
     //write method
     void sendmsg(String msg) {
         if (connected) {
-            Log.v("service", "connected  and sending " + msg);
+            Log.v("sendmsg", "connected  and sending " + msg);
             out.println(msg);
         }
     }
 
     //send to the activity or widget the message.
     void sendlocalmsg(String msg) {
+        String TAG = "sendlocalmsg";
         if (messenger != null) {
-            Log.v("service", "sending message via handler");
+            Log.v(TAG, "sending message via handler");
             //send message back via the handler
             Message mymsg = Message.obtain();
             mymsg.obj = msg;
             try {
                 messenger.send(mymsg);
             } catch (android.os.RemoteException e1) {
-                Log.w(getClass().getName(), "Exception sending message", e1);
+                Log.w(TAG, "Exception sending message", e1);
             }
         } else if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            Log.v("service", "sending message to widget");
+            Log.v(TAG, "sending message to widget");
             //send it to the widget
             Intent intent = new Intent(getApplicationContext(), TapWidget.class);
             intent.setAction(MESSAGE);
@@ -332,30 +336,31 @@ public class MyNetworkService extends Service {
             sendBroadcast(intent);
         } else {
             //well, this is problem.  just log it I guess
-            Log.v("Service", "Read and no send: " + msg);
+            Log.v(TAG, "Read and no send: " + msg);
         }
     }
 
     void readmsg() {
         String msg;
+        String TAG = "readmsg";
         while (connected) {
             try {
-                Log.v("service", "starting read ");
+                Log.v(TAG, "starting read ");
                 msg = in.readLine();
-                Log.v("service", "read message " + msg);
+                Log.v(TAG, "read message " + msg);
                 if (msg == null) {
                     connected = false;
-                    Log.v("service", "read exiting ");
-                    sendlocalmsg("disconnected");
+                    Log.v(TAG, "read exiting ");
+                    sendlocalmsg(myConstants.MSG_DISCONNECT);
                     return;
                 }
                 sendlocalmsg(msg);
             } catch (Exception e) {
-                Log.v("service", "read failed!");
-                Log.v("service", "exception " + e);
+                Log.v(TAG, "read failed!");
+                Log.v(TAG, "exception " + e);
                 connected = false;  //bail out.
             }
         }
-        Log.v("service", "readmsg ending. ");
+        Log.v(TAG, "readmsg ending. ");
     }
 }

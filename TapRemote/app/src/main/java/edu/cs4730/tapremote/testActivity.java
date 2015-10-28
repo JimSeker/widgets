@@ -25,7 +25,9 @@ public class testActivity extends AppCompatActivity {
             Object path = msg.obj;
             logger.append("\n" + path.toString());
             return true;
-        };
+        }
+
+        ;
     });
 
     @Override
@@ -38,7 +40,6 @@ public class testActivity extends AppCompatActivity {
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
 
-        //EThostname  ETport makeconn clientconn sendbutton
         logger = (TextView) findViewById(R.id.logger);
         logger.append("IP is " + ip);
         hostname = (EditText) findViewById(R.id.EThostname);
@@ -47,35 +48,35 @@ public class testActivity extends AppCompatActivity {
         mkconn = (Button) findViewById(R.id.makeconn);
         mkconn.setOnClickListener(new View.OnClickListener() {
             @Override
-           public void onClick(View v) {
+            public void onClick(View v) {
                 logger.append("port number is " + port.getText().toString());
                 Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
                 String portn = port.getText().toString();
-                i.putExtra("myport", portn);
-                i.putExtra("cmd", "connect");
-                i.putExtra("server", true);
+                i.putExtra(myConstants.KEY_PORT, portn);
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
+                i.putExtra(myConstants.KEY_SERVER, true);
 
                 Messenger messenger = new Messenger(handler);
-                i.putExtra("MESSENGER", messenger);
+                i.putExtra(myConstants.KEY_MESSAGER, messenger);
                 startService(i);
-           }
+            }
         });
         clientconn = (Button) findViewById(R.id.clientbutton);
         clientconn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String host = hostname.getText().toString();
+                String hostn = hostname.getText().toString();
                 String portn = port.getText().toString();
                 logger.append("port number is " + portn);
-                logger.append("host is " + host);
+                logger.append("host is " + hostn);
 
                 Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
-                i.putExtra("cmd", "connect");
-                i.putExtra("server", false);
-                i.putExtra("myport", portn);
-                i.putExtra("iphost", host);
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
+                i.putExtra(myConstants.KEY_SERVER, false);
+                i.putExtra(myConstants.KEY_PORT, portn);
+                i.putExtra(myConstants.KEY_HOST, hostn);
                 Messenger messenger = new Messenger(handler);
-                i.putExtra("MESSENGER", messenger);
+                i.putExtra(myConstants.KEY_MESSAGER, messenger);
 
                 startService(i);
             }
@@ -85,8 +86,8 @@ public class testActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
-                i.putExtra("cmd", "write");
-                i.putExtra("msg", "L");
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_WRITE);
+                i.putExtra(myConstants.KEY_MSG, "L");
 
                 startService(i);
             }
@@ -95,7 +96,7 @@ public class testActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
-                i.putExtra("cmd", "close");
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CLOSE);
                 startService(i);
             }
         });
@@ -106,9 +107,7 @@ public class testActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
-        i.putExtra("cmd", "close");
+        i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CLOSE);
         startService(i);
-
-       //stopService(i);
     }
 }
