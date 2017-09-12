@@ -32,7 +32,7 @@ public class widgetButtonProviderConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.widget_button_provider_configure);
-        mAppWidgetText = (EditText) findViewById(R.id.appwidget_text);
+        mAppWidgetText = findViewById(R.id.appwidget_text);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.
@@ -76,7 +76,7 @@ public class widgetButtonProviderConfigureActivity extends Activity {
     static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
-        prefs.commit();
+        prefs.commit();  //we need committed now, since it will used quickly!
     }
 
     // Read the prefix from the SharedPreferences object for this widget.
@@ -94,7 +94,7 @@ public class widgetButtonProviderConfigureActivity extends Activity {
     static void deleteTitlePref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
-        prefs.commit();
+        prefs.apply();
     }
 }
 
