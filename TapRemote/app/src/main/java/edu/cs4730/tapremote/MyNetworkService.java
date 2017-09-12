@@ -33,7 +33,7 @@ public class MyNetworkService extends Service {
     Messenger messenger = null;
     int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     boolean connected = false;
-
+    String TAG = "Service";
     ServerSocket serverSocket = null;
     Socket client = null;
     BufferedReader in;
@@ -80,11 +80,11 @@ public class MyNetworkService extends Service {
                         //got the info, now ready to setup the networking
                         if (amserver) {
                             //I am the server
-                            Log.v(TAG, "IamServer");
+                            Log.wtf(TAG, "IamServer");
                             connected = serverConn(port);
                         } else {
                             //I am the client
-                            Log.v(TAG, "IamClient");
+                            Log.wtf(TAG, "IamClient");
                             connected = clientConn(host, port);
                         }
                         //get how to send info back to call, by handler or widget id.
@@ -209,6 +209,7 @@ public class MyNetworkService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.wtf(TAG,"Service destroyed.");
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
 
@@ -294,7 +295,7 @@ public class MyNetworkService extends Service {
             try {
                 client.close();
             } catch (Exception e1) {
-                Log.v(TAG," " + e1);
+                Log.v(TAG, " " + e1);
             }
             return success;
         }

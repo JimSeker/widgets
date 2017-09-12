@@ -42,11 +42,11 @@ public class TapWidgetConfigureActivity extends Activity {
         findViewById(R.id.button_Server).setOnClickListener(mOnClickListener);
         findViewById(R.id.button_disconnect).setOnClickListener(mOnClickListener);
         hostname = (EditText) findViewById(R.id.EThostname);
-        hostname.setText("10.121.171.235");  //was the default, so I didn't have retype it.
+        hostname.setText("10.131.209.56");  //was the default, so I didn't have retype it.
         port = (EditText) findViewById(R.id.ETport);
 
         //What is our IP address?
-        WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
         ipaddr = (TextView) findViewById(R.id.tv_ip);
         ipaddr.setText(ip);
