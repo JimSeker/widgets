@@ -1,5 +1,6 @@
 package edu.cs4730.tapremote;
 
+import android.app.Notification;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Looper;
 import android.os.Messenger;
 import android.os.Process;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,6 +53,10 @@ public class MyNetworkService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
+            //promote to foreground and create persistent notification.
+            //in Oreo we only have a few seconds to do this or the service is killed.
+            Notification notification = getNotification("MyService is running");
+            startForeground(msg.arg1, notification);  //not sure what the ID needs to be.
 
             Log.v("handler", "In handle message");
             int port = 0;
@@ -363,5 +369,18 @@ public class MyNetworkService extends Service {
             }
         }
         Log.v(TAG, "readmsg ending. ");
+    }
+
+
+    // build a persistent notification and return it.
+    public Notification getNotification(String message) {
+
+        return new NotificationCompat.Builder(getApplicationContext(), TapWidgetConfigureActivity.id1)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setOngoing(true)  //persistent notification!
+                .setChannelId(TapWidgetConfigureActivity.id1)
+                .setContentTitle("Service")   //Title message top row.
+                .setContentText(message)  //message when looking at the notification, second row
+                .build();  //finally build and return a Notification.
     }
 }

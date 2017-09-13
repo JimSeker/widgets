@@ -1,6 +1,8 @@
 package edu.cs4730.tapremote;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +25,8 @@ public class TapWidgetConfigureActivity extends Activity {
     private static final String PREFS_NAME = "edu.cs4730.tapremote.TapWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     String widgetText;
+
+    public static String id1 = "test_channel_01";
 
     public TapWidgetConfigureActivity() {
         super();
@@ -47,7 +51,7 @@ public class TapWidgetConfigureActivity extends Activity {
 
         //What is our IP address?
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());  //wifi doesn't have ipv6.
         ipaddr = (TextView) findViewById(R.id.tv_ip);
         ipaddr.setText(ip);
 
@@ -74,6 +78,8 @@ public class TapWidgetConfigureActivity extends Activity {
             final Context context = TapWidgetConfigureActivity.this;
             String portn, hostn;
             Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
+            boolean endservice = false;
+
             switch(v.getId()) {
                 case R.id.button_Server:
                     portn = port.getText().toString();
@@ -93,10 +99,17 @@ public class TapWidgetConfigureActivity extends Activity {
                     break;
                 case R.id.button_disconnect:
                     i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CLOSE);
+                    endservice = true;  // this is kludge... not a good one either, but it works.
                     break;
 
             }
-            startService(i);  //send the intent.
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                startForegroundService(i);
+            } else {
+                //lower then Oreo, just start the service.
+                startService(i);  //send the intent.
+            }
+
             // When the button is clicked, store the string locally
             String widgetText = mAppWidgetText.getText().toString();
             saveTitlePref(context, mAppWidgetId, widgetText);
@@ -109,6 +122,10 @@ public class TapWidgetConfigureActivity extends Activity {
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
+
+            //if disconnected
+            if (endservice)
+                stopService(i);
             finish();
         }
     };
@@ -137,5 +154,28 @@ public class TapWidgetConfigureActivity extends Activity {
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.commit();
     }
+
+
+
+    /*
+  * for API 26+ create notification channels
+  */
+    private void createchannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            NotificationChannel mChannel = new NotificationChannel(id1,
+                    getString(R.string.channel_name),  //name of the channel
+                    NotificationManager.IMPORTANCE_LOW);   //importance level
+            //important level: default is is high on the phone.  high is urgent on the phone.  low is medium, so none is low?
+            // Configure the notification channel.
+            mChannel.setDescription(getString(R.string.channel_description));
+            mChannel.enableLights(true);
+            // Sets the notification light color for notifications posted to this channel, if the device supports this feature.
+            mChannel.setShowBadge(true);
+            nm.createNotificationChannel(mChannel);
+        }
+    }
+
 }
 
