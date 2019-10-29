@@ -1,6 +1,6 @@
 package edu.cs4730.widgetdemo3;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 //There is nothing here, it only exists, you can tell the app installed.

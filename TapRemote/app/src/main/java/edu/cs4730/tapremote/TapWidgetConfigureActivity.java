@@ -41,18 +41,19 @@ public class TapWidgetConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.tap_widget_configure);
-        mAppWidgetText = (TextView) findViewById(R.id.appwidget_text);
+        mAppWidgetText = findViewById(R.id.appwidget_text);
         findViewById(R.id.button_client).setOnClickListener(mOnClickListener);
         findViewById(R.id.button_Server).setOnClickListener(mOnClickListener);
         findViewById(R.id.button_disconnect).setOnClickListener(mOnClickListener);
-        hostname = (EditText) findViewById(R.id.EThostname);
+        hostname = findViewById(R.id.EThostname);
         hostname.setText("10.131.209.56");  //was the default, so I didn't have retype it.
-        port = (EditText) findViewById(R.id.ETport);
+        port = findViewById(R.id.ETport);
 
         //What is our IP address?
-        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiManager wm = (WifiManager) getApplicationContext().getApplicationContext().getSystemService(WIFI_SERVICE);
+        @SuppressWarnings("deprecation")
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());  //wifi doesn't have ipv6.
-        ipaddr = (TextView) findViewById(R.id.tv_ip);
+        ipaddr = findViewById(R.id.tv_ip);
         ipaddr.setText(ip);
 
         // Find the widget id from the intent.
@@ -60,7 +61,7 @@ public class TapWidgetConfigureActivity extends Activity {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+                AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
@@ -80,7 +81,7 @@ public class TapWidgetConfigureActivity extends Activity {
             Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
             boolean endservice = false;
 
-            switch(v.getId()) {
+            switch (v.getId()) {
                 case R.id.button_Server:
                     portn = port.getText().toString();
                     i.putExtra(myConstants.KEY_PORT, portn);
@@ -156,17 +157,16 @@ public class TapWidgetConfigureActivity extends Activity {
     }
 
 
-
     /*
-  * for API 26+ create notification channels
-  */
+     * for API 26+ create notification channels
+     */
     private void createchannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             NotificationChannel mChannel = new NotificationChannel(id1,
-                    getString(R.string.channel_name),  //name of the channel
-                    NotificationManager.IMPORTANCE_LOW);   //importance level
+                getString(R.string.channel_name),  //name of the channel
+                NotificationManager.IMPORTANCE_LOW);   //importance level
             //important level: default is is high on the phone.  high is urgent on the phone.  low is medium, so none is low?
             // Configure the notification channel.
             mChannel.setDescription(getString(R.string.channel_description));

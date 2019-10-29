@@ -1,7 +1,7 @@
 package edu.cs4730.widgetdemo2;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /*
  * There is nothing to see here, included only so you can tell the widget has been installed onto

@@ -2,7 +2,7 @@ package edu.cs4730.widgetdemo;
 
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /*
  * Nothing actually happens here.  This is only here so I know it installed on the phone for

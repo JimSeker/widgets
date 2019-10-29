@@ -5,14 +5,16 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class testActivity extends AppCompatActivity {
     TextView logger;
@@ -21,13 +23,11 @@ public class testActivity extends AppCompatActivity {
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NonNull Message msg) {
             Object path = msg.obj;
             logger.append("\n" + path.toString());
             return true;
         }
-
-        ;
     });
 
     @Override
@@ -36,16 +36,17 @@ public class testActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
 
 
-        WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        @SuppressWarnings("deprecation")
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
 
-        logger = (TextView) findViewById(R.id.logger);
+        logger = findViewById(R.id.logger);
         logger.append("IP is " + ip);
-        hostname = (EditText) findViewById(R.id.EThostname);
+        hostname = findViewById(R.id.EThostname);
         hostname.setText("10.121.171.235");
-        port = (EditText) findViewById(R.id.ETport);
-        mkconn = (Button) findViewById(R.id.makeconn);
+        port = findViewById(R.id.ETport);
+        mkconn = findViewById(R.id.makeconn);
         mkconn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +62,7 @@ public class testActivity extends AppCompatActivity {
                 startService(i);
             }
         });
-        clientconn = (Button) findViewById(R.id.clientbutton);
+        clientconn = findViewById(R.id.clientbutton);
         clientconn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +82,7 @@ public class testActivity extends AppCompatActivity {
                 startService(i);
             }
         });
-        sendbutton = (Button) findViewById(R.id.sendbutton);
+        sendbutton = findViewById(R.id.sendbutton);
         sendbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
