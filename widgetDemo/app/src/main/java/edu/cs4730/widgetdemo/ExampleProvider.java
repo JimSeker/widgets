@@ -8,8 +8,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import androidx.annotation.RequiresApi;
 
 //http://www.vogella.com/articles/AndroidWidgets/article.html
 //http://code4reference.com/2012/07/android-widget-tutorial/
@@ -40,6 +43,7 @@ public class ExampleProvider extends AppWidgetProvider {
 	 * This is where the actual work is done.   It is called from onUpdate for each
 	 * (homescreen) widget to update.   likely only one, but below we an change that functionality.
 	 */
+
 	static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
 		// Create some random number from the shared preference number stored in the configure activity.
@@ -68,8 +72,12 @@ public class ExampleProvider extends AppWidgetProvider {
 		
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 		//intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //this never worked correctly.
-
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pendingIntent;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+			 pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_MUTABLE);
+		} else {
+			 pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		}
 		//where update is the view and is clickable.  That way, it the widget will update when clicked.
         //in this case get a new random number.
 		remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -13,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
-/*
+/**
  * This is the configuration activity for the widget.
  */
 
@@ -35,8 +36,8 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
         Bundle extras = intent.getExtras();
         if (extras != null) {
             appWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         // If they gave us an intent without the widget id, just bail.
@@ -65,14 +66,13 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
 
     @Override
     public void onClick(View arg0) {
-        final Context context = getBaseContext();
 
         if (arg0 == btnok) {
             //save the preference
             SharedPreferences.Editor editor = getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE).edit();
             randnum = Integer.parseInt(et.getText().toString());
             editor.putInt(PREF_PREFIX_KEY + appWidgetId, randnum);
-            editor.commit();
+            editor.apply();
 
             //set the intent and go.
             Intent resultValue = new Intent();

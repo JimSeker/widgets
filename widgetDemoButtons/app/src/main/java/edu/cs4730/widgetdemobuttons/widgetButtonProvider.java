@@ -68,7 +68,11 @@ public class widgetButtonProvider extends AppWidgetProvider {
         Intent intent = new Intent(context, widgetButtonProvider.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //incase we need it for preferences.
         intent.setAction(action);
-        return PendingIntent.getBroadcast(context, 0, intent, 0);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
+        } else {
+            return PendingIntent.getBroadcast(context, 0, intent, 0);
+        }
     }
 
     @Override
@@ -91,7 +95,7 @@ public class widgetButtonProvider extends AppWidgetProvider {
             if (extras != null) {
                 //Log.w("Widget", "Bundle is not NULL");
                 int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                        AppWidgetManager.INVALID_APPWIDGET_ID);
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
                 if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                     //Log.w("Widget", "widget id is ok");
                     widgetText = widgetButtonProviderConfigureActivity.loadTitlePref(context, appWidgetId);

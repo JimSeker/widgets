@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -67,9 +68,13 @@ public class TapWidget extends AppWidgetProvider {
 
     static protected PendingIntent getPendingSelfIntent(Context context, String action, int appWidgetId) {
         Intent intent = new Intent(context, TapWidget.class);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //incase we need it for preferences.
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //in case we need it for preferences.
         intent.setAction(action);
-        return PendingIntent.getBroadcast(context, 0, intent, 0);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
+        } else {
+            return PendingIntent.getBroadcast(context, 0, intent, 0);
+        }
     }
 
     @Override
@@ -102,7 +107,7 @@ public class TapWidget extends AppWidgetProvider {
             if (extras != null) {
                 String msg = extras.getString(myConstants.KEY_MSG, "");
                 int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                        AppWidgetManager.INVALID_APPWIDGET_ID);
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
                 switch (msg) {
                     case "S":  //short message
                         vibrate(context, 1); //short
@@ -144,21 +149,9 @@ public class TapWidget extends AppWidgetProvider {
 
     public void vibrate(Context context, int time) {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        // from http://www.learn-android-easily.com/2012/11/how-to-vibrate-android-phone.html
-        // pass the number of millseconds fro which you want to vibrate the phone here we
-        // have passed 2000 so phone will vibrate for 2 seconds.
 
-        v.vibrate(time * 500);   //time * half a second.
-
-        // If you want to vibrate  in a pattern
-        //  long pattern[]={0,800,200,1200,300,2000,400,4000};
-        //this is pattern in which we want to Vibrate the Phone
-        //first 0  means silent for 0 milisecond
-        //800 means vibrate for 800 milisecond
-        //200 means  means silent for 200 milisecond
-        //1200  means vibrate for 1200 miliseconds
-        // 2nd argument is for repetition pass -1 if you do not want to repeat the Vibrate
-        // v.vibrate(pattern,-1);
+        //v.vibrate(time * 500);   //time * half a second.
+        v.vibrate(VibrationEffect.createOneShot(time * 500, 10)); //half a second
     }
 
 }

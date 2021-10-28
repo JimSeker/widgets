@@ -40,7 +40,7 @@ public class widgetButtonProviderConfigureActivity extends Activity {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+                AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
@@ -76,7 +76,7 @@ public class widgetButtonProviderConfigureActivity extends Activity {
     static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
-        prefs.commit();  //we need committed now, since it will used quickly!
+        prefs.apply();  //we need committed now, since it will used quickly!
     }
 
     // Read the prefix from the SharedPreferences object for this widget.

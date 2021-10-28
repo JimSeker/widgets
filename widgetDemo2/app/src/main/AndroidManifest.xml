@@ -9,6 +9,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="edu.cs4730.widgetdemo2.Widgetd2Activity"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,7 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="Widgetd2Provider">
+        <receiver
+            android:name="Widgetd2Provider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -26,6 +29,7 @@
         </receiver>
         <activity
             android:name=".Widgetd2Config"
+            android:exported="true"
             android:label="WidgetDemo2 Config">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />

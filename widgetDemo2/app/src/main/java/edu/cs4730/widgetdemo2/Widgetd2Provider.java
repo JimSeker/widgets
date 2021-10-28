@@ -58,9 +58,12 @@ public class Widgetd2Provider extends AppWidgetProvider {
         int[] ids = {appWidgetId};
 
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_MUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
         //where update is the view and is clickable.  That way, it the widget will update when clicked.
         //in this case get a new random number.
         remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
