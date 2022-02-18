@@ -1,7 +1,7 @@
 Andriod home screen widget Examples
 ===========
 
-`eclipse/` has the examples in eclipse project format, no longer updated.  Otherwise the examples are for android studio.
+`eclipse/` has the examples in eclipse project format, no longer updated.
 
 `widgetDemo`  provides a "simple" demo of a homescreen widget that displays a random number.  The number is configured
 in the configActivity.  It uses a sharedpreference so each instance of the widget can use a different number.  The preferences are
