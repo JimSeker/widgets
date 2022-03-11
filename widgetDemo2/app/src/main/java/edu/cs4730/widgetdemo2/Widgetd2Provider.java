@@ -20,21 +20,20 @@ public class Widgetd2Provider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         // if there may be multiple widgets active, so update all of them
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
-    /*
-    * do all the heavy lifting to update the widget here.
+    /**
+     * do all the heavy lifting to update the widget here.
      */
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         //first get the preference for this widget that is the top number.
         SharedPreferences preferences = context.getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE);
 
         //Now get the preference for this widget, stored using it's id number.   The default value is 100, if not found.
-        randnum = preferences.getInt(PREF_PREFIX_KEY + appWidgetId , 100);
+        randnum = preferences.getInt(PREF_PREFIX_KEY + appWidgetId, 100);
 
         // Now create get the random number for it.
         int number = (new Random().nextInt(randnum));
@@ -71,6 +70,7 @@ public class Widgetd2Provider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
     }
+
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.

@@ -1,6 +1,7 @@
 package edu.cs4730.widgetdemo2;
 
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 /*
@@ -8,13 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
  * the device.
  */
 
-
 public class Widgetd2Activity extends AppCompatActivity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.wd2activity);
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.wd2activity);
+    }
 
 }

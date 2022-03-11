@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 //There is nothing here, it only exists, you can tell the app installed.
 
-
 public class MainActivity extends AppCompatActivity {
 
     @Override

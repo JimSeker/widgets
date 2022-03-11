@@ -4,7 +4,7 @@
     android:background="#09C"
     android:orientation="horizontal"
     android:gravity="center_horizontal|center_vertical"
-    android:padding="@dimen/widget_margin">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/appwidget_text"

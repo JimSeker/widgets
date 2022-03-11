@@ -21,25 +21,21 @@ import android.widget.RemoteViews;
  * preferences can be stored/restored/deleted.
  */
 
-
 public class ExampleProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         // if there may be multiple widgets active, so update all of them
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
-
 
     /**
      * This is where the actual work is done.   It is called from onUpdate for each
      * (homescreen) widget to update.   likely only one, but below we an change that functionality.
      */
-
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Create some random number from the shared preference number stored in the configure activity.
@@ -93,15 +89,13 @@ public class ExampleProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 
-
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated
         // with it.
         final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            exampleConfActivity.deleteTitlePref(context,
-                appWidgetIds[i]);
+        for (int appWidgetId : appWidgetIds) {
+            exampleConfActivity.deleteTitlePref(context, appWidgetId);
         }
     }
 
