@@ -19,8 +19,7 @@ public class widgetButtonProvider extends AppWidgetProvider {
     private static final String ButtonClick1 = "ButtonClickTag1";
     private static final String ButtonClick2 = "ButtonClickTag2";
     private static final String TextClick = "TextClickTag1";
-
-
+    
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
@@ -32,9 +31,8 @@ public class widgetButtonProvider extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            widgetButtonProviderConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
+        for (int appWidgetId : appWidgetIds) {
+            widgetButtonProviderConfigureActivity.deleteTitlePref(context, appWidgetId);
         }
     }
 
