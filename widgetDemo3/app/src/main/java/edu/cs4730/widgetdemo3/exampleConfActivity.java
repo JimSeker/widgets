@@ -60,9 +60,9 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
 
         Log.w("ExampleACtivity", " num is " + randnum);
 
-        btnok = (Button) findViewById(R.id.ok);
+        btnok = findViewById(R.id.ok);
         btnok.setOnClickListener(this);
-        btncancel = (Button) findViewById(R.id.cancel);
+        btncancel = findViewById(R.id.cancel);
         btncancel.setOnClickListener(this);
 
 

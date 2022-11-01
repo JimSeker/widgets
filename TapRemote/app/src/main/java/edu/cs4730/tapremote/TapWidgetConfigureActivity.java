@@ -161,20 +161,20 @@ public class TapWidgetConfigureActivity extends Activity {
      * for API 26+ create notification channels
      */
     private void createchannel() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            NotificationChannel mChannel = new NotificationChannel(id1,
-                getString(R.string.channel_name),  //name of the channel
-                NotificationManager.IMPORTANCE_LOW);   //importance level
-            //important level: default is is high on the phone.  high is urgent on the phone.  low is medium, so none is low?
-            // Configure the notification channel.
-            mChannel.setDescription(getString(R.string.channel_description));
-            mChannel.enableLights(true);
-            // Sets the notification light color for notifications posted to this channel, if the device supports this feature.
-            mChannel.setShowBadge(true);
-            nm.createNotificationChannel(mChannel);
-        }
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationChannel mChannel = new NotificationChannel(id1,
+            getString(R.string.channel_name),  //name of the channel
+            NotificationManager.IMPORTANCE_LOW);   //importance level
+        //important level: default is is high on the phone.  high is urgent on the phone.  low is medium, so none is low?
+        // Configure the notification channel.
+        mChannel.setDescription(getString(R.string.channel_description));
+        mChannel.enableLights(true);
+        // Sets the notification light color for notifications posted to this channel, if the device supports this feature.
+        mChannel.setShowBadge(true);
+        nm.createNotificationChannel(mChannel);
+
     }
 
 }

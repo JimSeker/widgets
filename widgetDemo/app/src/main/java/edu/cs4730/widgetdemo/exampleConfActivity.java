@@ -36,16 +36,16 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.exampleconfactivity);
-        et = (EditText) findViewById(R.id.editText1);
+        et = findViewById(R.id.editText1);
 
         SharedPreferences preferences = getSharedPreferences("example", Context.MODE_PRIVATE);
         //get the key randnum and set a default value of 100 if the key doesn't exist.  IE the first time this app is run.
         randnum = preferences.getInt("randnum", 100);
         et.setText(String.valueOf(randnum));
         Log.w("ExampleACtivity", " num is " + randnum);
-        btnok = (Button) findViewById(R.id.ok);
+        btnok = findViewById(R.id.ok);
         btnok.setOnClickListener(this);
-        btncancel = (Button) findViewById(R.id.cancel);
+        btncancel = findViewById(R.id.cancel);
         btncancel.setOnClickListener(this);
 
 

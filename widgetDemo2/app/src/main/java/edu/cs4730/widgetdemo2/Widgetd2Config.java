@@ -47,7 +47,7 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
 
 
         setContentView(R.layout.widget_config);
-        et = (EditText) findViewById(R.id.editText1);
+        et = findViewById(R.id.editText1);
 
         //we have valid ID number, but likely nothing in preferences yet, so set the default to 100.
         SharedPreferences preferences = getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE);
@@ -56,9 +56,9 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
         //setup the view finally.
         et.setText(String.valueOf(randnum));
 
-        btnok = (Button) findViewById(R.id.ok);
+        btnok = findViewById(R.id.ok);
         btnok.setOnClickListener(this);
-        btncancel = (Button) findViewById(R.id.cancel);
+        btncancel = findViewById(R.id.cancel);
         btncancel.setOnClickListener(this);
 
 
