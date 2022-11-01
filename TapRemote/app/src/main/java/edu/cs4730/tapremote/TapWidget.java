@@ -58,7 +58,13 @@ public class TapWidget extends AppWidgetProvider {
         Intent Buttonintent = new Intent(context, TapWidgetConfigureActivity.class);
         //match the info the activity expects to see.
         Buttonintent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        PendingIntent ButtonpendingIntent = PendingIntent.getActivity(context, 0, Buttonintent, 0);
+        PendingIntent ButtonpendingIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            ButtonpendingIntent = PendingIntent.getActivity(context, 0, Buttonintent, PendingIntent.FLAG_MUTABLE);
+        } else {
+            ButtonpendingIntent = PendingIntent.getActivity(context, 0, Buttonintent, 0);
+        }
+
         //views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, TextClick, appWidgetId));
         views.setOnClickPendingIntent(R.id.appwidget_text, ButtonpendingIntent);
 

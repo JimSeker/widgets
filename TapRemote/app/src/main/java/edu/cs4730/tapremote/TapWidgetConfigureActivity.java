@@ -1,23 +1,34 @@
 package edu.cs4730.tapremote;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.Map;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 /**
  * The configuration screen for the {@link TapWidget TapWidget} AppWidget.
  */
-public class TapWidgetConfigureActivity extends Activity {
+public class TapWidgetConfigureActivity extends AppCompatActivity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     TextView mAppWidgetText, ipaddr;
@@ -27,6 +38,9 @@ public class TapWidgetConfigureActivity extends Activity {
     String widgetText;
 
     public static String id1 = "test_channel_01";
+    final String TAG = "MainActivity";
+    ActivityResultLauncher<String[]> rpl;
+    private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.POST_NOTIFICATIONS};
 
     public TapWidgetConfigureActivity() {
         super();
@@ -39,6 +53,24 @@ public class TapWidgetConfigureActivity extends Activity {
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
+
+        // for notifications permission now required in api 33
+        //this allows us to check with multiple permissions, but in this case (currently) only need 1.
+        rpl = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
+            new ActivityResultCallback<Map<String, Boolean>>() {
+                @Override
+                public void onActivityResult(Map<String, Boolean> isGranted) {
+                    boolean granted = true;
+                    for (Map.Entry<String, Boolean> x : isGranted.entrySet()) {
+                        logthis(x.getKey() + " is " + x.getValue());
+                        if (!x.getValue()) granted = false;
+                    }
+                    if (granted)
+                        logthis("Permissions granted for api 33+");
+                }
+            }
+        );
+
 
         setContentView(R.layout.tap_widget_configure);
         mAppWidgetText = findViewById(R.id.appwidget_text);
@@ -72,6 +104,13 @@ public class TapWidgetConfigureActivity extends Activity {
         widgetText = loadTitlePref(TapWidgetConfigureActivity.this, mAppWidgetId);
         mAppWidgetText.setText(widgetText);
 
+        createchannel();
+        //for the new api 33+ notifications permissions.
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!allPermissionsGranted()) {
+                rpl.launch(REQUIRED_PERMISSIONS);
+            }
+        }
     }
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -81,35 +120,31 @@ public class TapWidgetConfigureActivity extends Activity {
             Intent i = new Intent(getApplicationContext(), MyNetworkService.class);
             boolean endservice = false;
 
-            switch (v.getId()) {
-                case R.id.button_Server:
-                    portn = port.getText().toString();
-                    i.putExtra(myConstants.KEY_PORT, portn);
-                    i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
-                    i.putExtra(myConstants.KEY_SERVER, true);
-                    i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    break;
-                case R.id.button_client:
-                    hostn = hostname.getText().toString();
-                    portn = port.getText().toString();
-                    i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
-                    i.putExtra(myConstants.KEY_SERVER, false);
-                    i.putExtra(myConstants.KEY_PORT, portn);
-                    i.putExtra(myConstants.KEY_HOST, hostn);
-                    i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    break;
-                case R.id.button_disconnect:
-                    i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CLOSE);
-                    endservice = true;  // this is kludge... not a good one either, but it works.
-                    break;
-
+            if (v.getId() == R.id.button_Server) {
+                portn = port.getText().toString();
+                i.putExtra(myConstants.KEY_PORT, portn);
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
+                i.putExtra(myConstants.KEY_SERVER, true);
+                i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                logthis("server connect");
+            } else if (v.getId() == R.id.button_client) {
+                hostn = hostname.getText().toString();
+                portn = port.getText().toString();
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CONNECT);
+                i.putExtra(myConstants.KEY_SERVER, false);
+                i.putExtra(myConstants.KEY_PORT, portn);
+                i.putExtra(myConstants.KEY_HOST, hostn);
+                i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                logthis("client connect");
+            } else if (v.getId() == R.id.button_disconnect) {
+                i.putExtra(myConstants.KEY_CMD, myConstants.CMD_CLOSE);
+                endservice = true;  // this is kludge... not a good one either, but it works.
+                logthis("disconnect");
             }
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                startForegroundService(i);
-            } else {
-                //lower then Oreo, just start the service.
-                startService(i);  //send the intent.
-            }
+            logthis("about to start the service");
+            startForegroundService(i);
+            //lower then Oreo, just start the service.
+            // startService(i);  //send the intent.
 
             // When the button is clicked, store the string locally
             String widgetText = mAppWidgetText.getText().toString();
@@ -163,7 +198,6 @@ public class TapWidgetConfigureActivity extends Activity {
     private void createchannel() {
 
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         NotificationChannel mChannel = new NotificationChannel(id1,
             getString(R.string.channel_name),  //name of the channel
             NotificationManager.IMPORTANCE_LOW);   //importance level
@@ -176,6 +210,21 @@ public class TapWidgetConfigureActivity extends Activity {
         nm.createNotificationChannel(mChannel);
 
     }
+
+    public void logthis(String msg) {
+        Log.d(TAG, msg);
+    }
+
+    //ask for permissions when we start.
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
 }
 
