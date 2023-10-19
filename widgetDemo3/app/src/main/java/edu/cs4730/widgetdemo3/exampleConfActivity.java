@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import edu.cs4730.widgetdemo3.databinding.ExampleconfactivityBinding;
 
 /**
  * This is the activity that sets up the configurations for the homescreen widget.
@@ -21,8 +20,7 @@ import android.widget.EditText;
 
 public class exampleConfActivity extends AppCompatActivity implements OnClickListener {
     int randnum = 100;  //default value
-    EditText et;
-    Button btnok, btncancel;
+    ExampleconfactivityBinding binding;
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     private static final String PREFS_NAME = "edu.cs4730.widgetdemo.example";
@@ -35,13 +33,13 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
 
         //if this is exited before we do anything, set the right result.
         setResult(RESULT_CANCELED);
+        binding = ExampleconfactivityBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID);
+            mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         // If they gave us an intent without the widget id, just bail.
@@ -49,44 +47,33 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
             finish();
         }
 
-
-        setContentView(R.layout.exampleconfactivity);
-        et = (EditText) findViewById(R.id.editText1);
-
         //first get the current preference or default of 100
         randnum = loadTitlePref(this, mAppWidgetId);
         //now set that as the value
-        et.setText(String.valueOf(randnum));
+        binding.editText1.setText(String.valueOf(randnum));
 
         Log.w("ExampleACtivity", " num is " + randnum);
 
-        btnok = findViewById(R.id.ok);
-        btnok.setOnClickListener(this);
-        btncancel = findViewById(R.id.cancel);
-        btncancel.setOnClickListener(this);
-
-
+        binding.ok.setOnClickListener(this);
+        binding.cancel.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View arg0) {
         final Context context = exampleConfActivity.this;
 
-        if (arg0 == btnok) {
-            randnum = Integer.parseInt(et.getText().toString());
+        if (arg0 == binding.ok) {
+            randnum = Integer.parseInt(binding.editText1.getText().toString());
             saveTitlePref(context, mAppWidgetId, randnum);
 
-            ///  huh??
             // It is the responsibility of the configuration activity to update
             // the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             ExampleProvider.updateAppWidget(context, appWidgetManager, mAppWidgetId);
 
-
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
-
         }
         finish();  //we are done.
     }
@@ -94,8 +81,7 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
 
     // Write the prefix to the SharedPreferences object for this widget
     static void saveTitlePref(Context context, int appWidgetId, int num) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(
-            PREFS_NAME, 0).edit();
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putInt(PREF_PREFIX_KEY + appWidgetId, num);
         prefs.apply();
     }

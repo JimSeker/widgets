@@ -13,6 +13,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import edu.cs4730.widgetdemo2.databinding.WidgetConfigBinding;
+
 
 /**
  * This is the configuration activity for the widget.
@@ -21,8 +23,7 @@ import android.widget.EditText;
 public class Widgetd2Config extends AppCompatActivity implements OnClickListener {
     int randnum = 100;  //default value
     private static final String PREF_PREFIX_KEY = "appwidget_";
-    EditText et;
-    Button btnok, btncancel;
+    WidgetConfigBinding binding;
     int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
@@ -31,13 +32,14 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
         //set canceled now, in case of failure or user exits.
         setResult(RESULT_CANCELED);
 
+        binding = WidgetConfigBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         //next get the ID number, setting the invalid number as default.
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            appWidgetId = extras.getInt(
-                AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID);
+            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         // If they gave us an intent without the widget id, just bail.
@@ -46,31 +48,25 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
         }
 
 
-        setContentView(R.layout.widget_config);
-        et = findViewById(R.id.editText1);
-
         //we have valid ID number, but likely nothing in preferences yet, so set the default to 100.
         SharedPreferences preferences = getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE);
         randnum = preferences.getInt(PREF_PREFIX_KEY + appWidgetId, 100);
 
         //setup the view finally.
-        et.setText(String.valueOf(randnum));
+        binding.editText1.setText(String.valueOf(randnum));
 
-        btnok = findViewById(R.id.ok);
-        btnok.setOnClickListener(this);
-        btncancel = findViewById(R.id.cancel);
-        btncancel.setOnClickListener(this);
-
+        binding.ok.setOnClickListener(this);
+        binding.cancel.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View arg0) {
 
-        if (arg0 == btnok) {
+        if (arg0 == binding.ok) {
             //save the preference
             SharedPreferences.Editor editor = getSharedPreferences("widgetDemo2", Context.MODE_PRIVATE).edit();
-            randnum = Integer.parseInt(et.getText().toString());
+            randnum = Integer.parseInt(binding.editText1.getText().toString());
             editor.putInt(PREF_PREFIX_KEY + appWidgetId, randnum);
             editor.apply();
 
@@ -78,7 +74,6 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             setResult(RESULT_OK, resultValue);
-
         }
         finish();  //we are done.
     }

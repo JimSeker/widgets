@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import edu.cs4730.widgetdemo.databinding.ExampleconfactivityBinding;
 
 /**
  * This is the activity that sets up the configurations for the homescreen widget.
@@ -20,13 +19,10 @@ import android.widget.EditText;
 
 public class exampleConfActivity extends AppCompatActivity implements OnClickListener {
     int randnum = 100;  //default value
-    EditText et;
-    Button btnok, btncancel;
+    ExampleconfactivityBinding binding;
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-
     private static final String PREFS_NAME = "edu.cs4730.widgetdemo.example";
     private static final String PREF_PREFIX_KEY = "appwidget_";
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,43 +30,36 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
 
         //if this is exited before we do anything, set the right result.
         setResult(RESULT_CANCELED);
-
-        setContentView(R.layout.exampleconfactivity);
-        et = findViewById(R.id.editText1);
+        binding = ExampleconfactivityBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         SharedPreferences preferences = getSharedPreferences("example", Context.MODE_PRIVATE);
         //get the key randnum and set a default value of 100 if the key doesn't exist.  IE the first time this app is run.
         randnum = preferences.getInt("randnum", 100);
-        et.setText(String.valueOf(randnum));
+        binding.editText1.setText(String.valueOf(randnum));
         Log.w("ExampleACtivity", " num is " + randnum);
-        btnok = findViewById(R.id.ok);
-        btnok.setOnClickListener(this);
-        btncancel = findViewById(R.id.cancel);
-        btncancel.setOnClickListener(this);
 
+        binding.ok.setOnClickListener(this);
+        binding.cancel.setOnClickListener(this);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID);
+            mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         // If they gave us an intent without the widget id, just bail.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
-
-
     }
 
     @Override
     public void onClick(View arg0) {
         final Context context = exampleConfActivity.this;
 
-        if (arg0 == btnok) {
-            randnum = Integer.parseInt(et.getText().toString());
+        if (arg0 == binding.ok) {
+            randnum = Integer.parseInt(binding.editText1.getText().toString());
             saveTitlePref(context, mAppWidgetId, randnum);
 
             // It is the responsibility of the configuration activity to update the app widget
@@ -87,8 +76,7 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
 
     // Write the prefix to the SharedPreferences object for this widget
     static void saveTitlePref(Context context, int appWidgetId, int num) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(
-            PREFS_NAME, 0).edit();
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putInt(PREF_PREFIX_KEY + appWidgetId, num);
         prefs.commit();
     }
