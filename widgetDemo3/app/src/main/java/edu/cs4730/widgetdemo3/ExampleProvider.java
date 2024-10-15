@@ -2,6 +2,7 @@ package edu.cs4730.widgetdemo3;
 
 import java.util.Random;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -36,6 +37,7 @@ public class ExampleProvider extends AppWidgetProvider {
      * This is where the actual work is done.   It is called from onUpdate for each
      * (homescreen) widget to update.   likely only one, but below we an change that functionality.
      */
+    @SuppressLint("UnspecifiedImmutableFlag")  //lint learn how to use if statements!
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Create some random number from the shared preference number stored in the configure activity.
@@ -91,9 +93,7 @@ public class ExampleProvider extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        // When the user deletes the widget, delete the preference associated
-        // with it.
-        final int N = appWidgetIds.length;
+        // When the user deletes the widget, delete the preference associated with it.
         for (int appWidgetId : appWidgetIds) {
             exampleConfActivity.deleteTitlePref(context, appWidgetId);
         }

@@ -2,18 +2,13 @@ package edu.cs4730.widgetdemo;
 
 import java.util.Random;
 
-import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
-
-import androidx.annotation.RequiresApi;
 
 //http://www.vogella.com/articles/AndroidWidgets/article.html
 //http://code4reference.com/2012/07/android-widget-tutorial/
@@ -46,8 +41,7 @@ public class ExampleProvider extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Create some random number from the shared preference number stored in the configure activity.
-        int number = (new Random().nextInt(
-            exampleConfActivity.loadTitlePref(context, appWidgetId)  //get the number via the shared preferences.
+        int number = (new Random().nextInt(exampleConfActivity.loadTitlePref(context, appWidgetId)  //get the number via the shared preferences.
         ));
 
         // Construct the RemoteViews object
@@ -88,12 +82,9 @@ public class ExampleProvider extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        // When the user deletes the widget, delete the preference associated
-        // with it.
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            exampleConfActivity.deleteTitlePref(context,
-                appWidgetIds[i]);
+        // When the user deletes the widget, delete the preference associated with it.
+        for (int appWidgetId : appWidgetIds) {
+            exampleConfActivity.deleteTitlePref(context, appWidgetId);
         }
     }
 

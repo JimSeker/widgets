@@ -1,5 +1,6 @@
 package edu.cs4730.widgetdemobuttons;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -61,6 +62,7 @@ public class widgetButtonProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag") //lint, learn what an if statement is.
     static protected PendingIntent getPendingSelfIntent(Context context, String action, int appWidgetId) {
         Intent intent = new Intent(context, widgetButtonProvider.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //incase we need it for preferences.
