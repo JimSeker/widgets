@@ -24,6 +24,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 /**
  * The configuration screen for the {@link TapWidget TapWidget} AppWidget.
@@ -73,6 +76,13 @@ public class TapWidgetConfigureActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.tap_widget_configure);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.configmain), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+
         mAppWidgetText = findViewById(R.id.appwidget_text);
         findViewById(R.id.button_client).setOnClickListener(mOnClickListener);
         findViewById(R.id.button_Server).setOnClickListener(mOnClickListener);

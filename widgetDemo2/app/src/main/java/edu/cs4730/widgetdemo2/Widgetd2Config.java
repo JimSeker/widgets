@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import edu.cs4730.widgetdemo2.databinding.WidgetConfigBinding;
 
@@ -31,7 +34,11 @@ public class Widgetd2Config extends AppCompatActivity implements OnClickListener
 
         binding = WidgetConfigBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ViewCompat.setOnApplyWindowInsetsListener(binding.configmain, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
         //next get the ID number, setting the invalid number as default.
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

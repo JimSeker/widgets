@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import edu.cs4730.widgetdemo.databinding.ExampleconfactivityBinding;
 
@@ -32,12 +35,16 @@ public class exampleConfActivity extends AppCompatActivity implements OnClickLis
         setResult(RESULT_CANCELED);
         binding = ExampleconfactivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ViewCompat.setOnApplyWindowInsetsListener(binding.configmain, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
         SharedPreferences preferences = getSharedPreferences("example", Context.MODE_PRIVATE);
         //get the key randnum and set a default value of 100 if the key doesn't exist.  IE the first time this app is run.
         randnum = preferences.getInt("randnum", 100);
         binding.editText1.setText(String.valueOf(randnum));
-        Log.w("ExampleACtivity", " num is " + randnum);
+        Log.w("ExampleActivity", " num is " + randnum);
 
         binding.ok.setOnClickListener(this);
         binding.cancel.setOnClickListener(this);
