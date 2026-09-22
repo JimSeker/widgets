@@ -58,11 +58,11 @@ public class ExampleProvider extends AppWidgetProvider {
         //match the info the activity expects to see.
         Buttonintent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent ButtonpendingIntent;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             ButtonpendingIntent = PendingIntent.getActivity(context, 0, Buttonintent, PendingIntent.FLAG_MUTABLE);
-        } else {
-            ButtonpendingIntent = PendingIntent.getActivity(context, 0, Buttonintent, 0);
-        }
+//        } else {
+//            ButtonpendingIntent = PendingIntent.getActivity(context, 0, Buttonintent, 0);
+//        }
         remoteViews.setOnClickPendingIntent(R.id.config, ButtonpendingIntent);
 
         // Register an onClickListener for the text view.
@@ -78,11 +78,11 @@ public class ExampleProvider extends AppWidgetProvider {
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 
         PendingIntent pendingIntent;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_MUTABLE);
-        } else {
-            pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+//        } else {
+//            pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        }
         //where update is the view and is clickable.  That way, it the widget will update when clicked.
         //in this case get a new random number.
         remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);

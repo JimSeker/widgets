@@ -20,7 +20,7 @@ public class widgetButtonProvider extends AppWidgetProvider {
     private static final String ButtonClick1 = "ButtonClickTag1";
     private static final String ButtonClick2 = "ButtonClickTag2";
     private static final String TextClick = "TextClickTag1";
-    
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
@@ -65,13 +65,13 @@ public class widgetButtonProvider extends AppWidgetProvider {
     @SuppressLint("UnspecifiedImmutableFlag") //lint, learn what an if statement is.
     static protected PendingIntent getPendingSelfIntent(Context context, String action, int appWidgetId) {
         Intent intent = new Intent(context, widgetButtonProvider.class);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //incase we need it for preferences.
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //in case we need it for preferences.
         intent.setAction(action);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
-        } else {
-            return PendingIntent.getBroadcast(context, 0, intent, 0);
-        }
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE);
+//        } else {
+//            return PendingIntent.getBroadcast(context, 0, intent, 0);
+//        }
     }
 
     @Override
@@ -80,7 +80,7 @@ public class widgetButtonProvider extends AppWidgetProvider {
 
         //now we check to see which of the actions and then respond.
         //most the buttons just show static info.
-        //the textview will get the id and toast it's name.
+        //the textview will get the id and toast its name.
         if (ButtonClick1.equals(intent.getAction())) {
 
             Toast.makeText(context, "Button1", Toast.LENGTH_SHORT).show();

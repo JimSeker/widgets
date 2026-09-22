@@ -66,11 +66,11 @@ public class ExampleProvider extends AppWidgetProvider {
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);  //this never worked correctly.
         PendingIntent pendingIntent;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_MUTABLE);
-        } else {
-            pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+//        } else {
+//            pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        }
         //where update is the view and is clickable.  That way, it the widget will update when clicked.
         //in this case get a new random number.
         remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);

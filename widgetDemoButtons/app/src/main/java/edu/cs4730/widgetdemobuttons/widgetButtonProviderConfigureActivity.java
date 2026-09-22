@@ -1,7 +1,6 @@
 package edu.cs4730.widgetdemobuttons;
 
 import android.Manifest;
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -115,7 +114,7 @@ public class widgetButtonProviderConfigureActivity extends AppCompatActivity {
     static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
-        prefs.apply();  //we need committed now, since it will used quickly!
+        prefs.apply();  //we need committed now, since it will be used quickly!
     }
 
     // Read the prefix from the SharedPreferences object for this widget.
